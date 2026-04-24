@@ -66,17 +66,30 @@ export default function OrgTree() {
     return () => window.removeEventListener('keydown', onKey)
   }, [undo])
 
-  // ── mousedown / dragstart の default を防ぐ（ホワイトアウト防止）─
+  // ── ブラウザ既定動作を包括的に防ぐ（ホワイトアウト防止）────
   useEffect(() => {
     const el = containerRef.current
     if (!el) return
-    const onMouseDown  = (e) => e.preventDefault()
-    const onDragStart  = (e) => e.preventDefault()
-    el.addEventListener('mousedown', onMouseDown)
-    el.addEventListener('dragstart', onDragStart)
+    const prevent = (e) => e.preventDefault()
+    // ボタン以外の touchstart / touchmove を prevent（iOS スクロール・バウンス防止）
+    const preventTouch = (e) => {
+      if (e.target.closest('button')) return
+      e.preventDefault()
+    }
+    el.addEventListener('mousedown',   prevent)
+    el.addEventListener('dragstart',   prevent)
+    el.addEventListener('contextmenu', prevent)
+    el.addEventListener('touchstart',  preventTouch, { passive: false })
+    el.addEventListener('touchmove',   preventTouch, { passive: false })
+    // document レベルでも dragstart を防ぐ
+    document.addEventListener('dragstart', prevent)
     return () => {
-      el.removeEventListener('mousedown', onMouseDown)
-      el.removeEventListener('dragstart', onDragStart)
+      el.removeEventListener('mousedown',   prevent)
+      el.removeEventListener('dragstart',   prevent)
+      el.removeEventListener('contextmenu', prevent)
+      el.removeEventListener('touchstart',  preventTouch)
+      el.removeEventListener('touchmove',   preventTouch)
+      document.removeEventListener('dragstart', prevent)
     }
   }, [])
 
@@ -482,7 +495,7 @@ export default function OrgTree() {
 
       {/* HTML ノードオーバーレイ（foreignObject の代替 — iOS Safari 対応）*/}
       <div
-        style={{ position: 'absolute', inset: 0, pointerEvents: 'none', overflow: 'hidden' }}
+        style={{ position: 'absolute', inset: 0, pointerEvents: 'none', overflow: 'visible' }}
         onDragStart={(e) => e.preventDefault()}
       >
         <div style={{
