@@ -300,12 +300,14 @@ export default function OrgTree() {
     if (cur.length === 1 && touchPanRef.current) {
       // ノードドラッグ中はパンしない
       if (!pointerRef.current?.moved) {
-        const dx = cur[0].clientX - touchPanRef.current.startX
-        const dy = cur[0].clientY - touchPanRef.current.startY
+        // ref をローカル変数にキャプチャ（setTfm callback 実行時に null になっていてもクラッシュしないように）
+        const pan = touchPanRef.current
+        const dx = cur[0].clientX - pan.startX
+        const dy = cur[0].clientY - pan.startY
         setTfm((t) => ({
           ...t,
-          x: touchPanRef.current.startTx + dx,
-          y: touchPanRef.current.startTy + dy,
+          x: pan.startTx + dx,
+          y: pan.startTy + dy,
         }))
       }
     }
