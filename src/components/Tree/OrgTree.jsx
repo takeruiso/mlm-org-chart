@@ -117,6 +117,8 @@ export default function OrgTree() {
     const onMouseDown = (e) => {
       if (e.button !== 0) return
       if (onNodeRef.current) { onNodeRef.current = false; return }
+      // フォーム要素（select / input / button / textarea / option）はパン対象外
+      if (e.target.closest('select, input, button, textarea, option, label')) return
       e.preventDefault() // ブラウザのドラッグ幽霊画像・テキスト選択を防ぐ
       const start = { x: e.clientX, y: e.clientY, tx: tfmRef.current.x, ty: tfmRef.current.y }
 
