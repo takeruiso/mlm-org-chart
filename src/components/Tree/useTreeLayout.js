@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { useStore } from '../../store/useStore.js'
+import { ROLE_RANK } from '../../constants/roles.js'
 
 export const NODE_W = 200
 export const NODE_H = 72
@@ -7,11 +8,23 @@ export const GAP_X = 14
 export const GAP_Y = 54
 
 export function useTreeLayout() {
-  const members = useStore((s) => s.members)
-  return useMemo(() => computeLayout(members), [members])
+  const members    = useStore((s) => s.members)
+  const roleFilter = useStore((s) => s.roleFilter)
+  return useMemo(() => computeLayout(members, roleFilter), [members, roleFilter])
 }
 
-export function computeLayout(members) {
+export function computeLayout(members, roleFilter = 'ALL') {
+  // タイトルフィルター適用：rank が選択値以上のメンバーだけ残す
+  if (roleFilter && roleFilter !== 'ALL') {
+    const minRank = ROLE_RANK[roleFilter] ?? 0
+    const filtered = {}
+    Object.keys(members).forEach((id) => {
+      const m = members[id]
+      const rank = ROLE_RANK[m.role] ?? 0
+      if (rank >= minRank) filtered[id] = m
+    })
+    members = filtered
+  }
   const ids = Object.keys(members)
   if (!ids.length) return { positions: {}, childMap: {}, roots: [], hiddenChildrenMap: {} }
 

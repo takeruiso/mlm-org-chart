@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useMemo, useReducer } from 'react'
 import { useStore } from '../../store/useStore.js'
 import { useTreeLayout, NODE_W, collectDescendants, getSlotPos } from './useTreeLayout.js'
+import { ROLE_RANK, FILTER_OPTIONS } from '../../constants/roles.js'
 import TreeNode from './TreeNode.jsx'
 import DropZone from './DropZone.jsx'
 
@@ -24,6 +25,8 @@ export default function OrgTree() {
   const addRootNode   = useStore((s) => s.addRootNode)
   const undo            = useStore((s) => s.undo)
   const toggleCollapsed = useStore((s) => s.toggleCollapsed)
+  const roleFilter      = useStore((s) => s.roleFilter)
+  const setRoleFilter   = useStore((s) => s.setRoleFilter)
 
   const { positions, childMap, hiddenChildrenMap } = useTreeLayout()
 
@@ -405,6 +408,29 @@ export default function OrgTree() {
         >
           ＋ ルート追加
         </button>
+      </div>
+
+      {/* フィルター（左上） */}
+      <div style={{ position: 'absolute', top: 16, left: 16, zIndex: 10 }}>
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: 8,
+          background: 'white', border: '1px solid #D1D5DB', borderRadius: 8,
+          padding: '6px 10px', boxShadow: '0 1px 4px rgba(0,0,0,.10)',
+        }}>
+          <span style={{ fontSize: 12, color: '#6B7280', fontWeight: 600 }}>フィルター</span>
+          <select
+            value={roleFilter}
+            onChange={(e) => setRoleFilter(e.target.value)}
+            style={{
+              fontSize: 13, padding: '3px 6px', border: '1px solid #E5E7EB',
+              borderRadius: 6, background: 'white', cursor: 'pointer', outline: 'none',
+            }}
+          >
+            {FILTER_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>{opt.label}</option>
+            ))}
+          </select>
+        </div>
       </div>
 
       {/* 全体表示（右下） */}

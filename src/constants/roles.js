@@ -45,4 +45,19 @@ export const ROLES = {
 
 export const ROLE_OPTIONS = ['', 'PDCM', 'DCM', 'ECM', 'PM', 'GM']
 
+// 階級（数字大きいほど上位）
+export const ROLE_RANK = {
+  PDCM: 5, DCM: 4, ECM: 3, PM: 2, GM: 1, '': 0,
+}
+
+// フィルター用：選択したタイトル以上だけ表示
+export const FILTER_OPTIONS = [
+  { value: 'ALL',  label: '全表示' },
+  { value: 'PDCM', label: 'PDCM 以上' },
+  { value: 'DCM',  label: 'DCM 以上' },
+  { value: 'ECM',  label: 'ECM 以上' },
+  { value: 'PM',   label: 'PM 以上' },
+  { value: 'GM',   label: 'GM 以上' },
+]
+
 export const getRoleStyle = (role) => ROLES[role] ?? ROLES['']

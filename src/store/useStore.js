@@ -52,6 +52,10 @@ export const useStore = create((set, get) => ({
   syncStatus: 'synced', // 'synced' | 'syncing'
   setSyncStatus: (s) => set({ syncStatus: s }),
 
+  // --- Filter ---
+  roleFilter: 'ALL',  // 'ALL' | 'PDCM' | 'DCM' | 'ECM' | 'PM' | 'GM'
+  setRoleFilter: (f) => set({ roleFilter: f }),
+
   // --- Confirm Dialog ---
   confirm: null,        // { message, onOk } | null
   showConfirm: (message, onOk) => set({ confirm: { message, onOk } }),
